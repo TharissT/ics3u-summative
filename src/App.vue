@@ -1,4 +1,5 @@
 <script setup>
+import { RouterView } from 'vue-router';
 </script>
 
 <template>
@@ -7,4 +8,5 @@
   </Suspense>
 </template>
 
-<style scoped></style>
+<style scoped>
+</style>
