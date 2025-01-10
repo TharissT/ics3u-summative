@@ -1,37 +1,52 @@
 <script setup>
-  import { RouterLink, useRouter } from 'vue-router';
-  import { ref } from 'vue';
-  import { useStore } from "../store"
+import { RouterLink, useRouter } from 'vue-router';
+import { ref } from 'vue';
+import { useStore } from "../store"
+import { signInWithEmailAndPassword, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { auth } from "../firebase"
 
-  const store = useStore();
-  const router = useRouter();
-  const email = ref('');
-  const password = ref('');
+const store = useStore();
+const router = useRouter();
+const email = ref('');
+const password = ref('');
 
-  const handleLogin = () => {
-    if (password.value === "ilovemovies") {
-      store.email = email.value;
-      router.push("/movies");
-    } else {
-      alert("Invalid Password");
-    }
-  };
+const loginByEmail = async () => {
+  try {
+    const user = (await signInWithEmailAndPassword(auth, email.value, password.value)).user;
+    store.user = user;
+    router.push("/movies");
+  } catch (error) {
+    console.log(error);
+    alert("There was an error signing in with email!");
+  }
+};
+
+const loginByGoogle = async () => {
+  try {
+    const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
+    store.user = user;
+    router.push("/movies");
+  } catch (error) {
+    alert("There was an error signing in with Google!");
+  }
+};
 </script>
 
 <template>
   <div class="hero">
     <div class="overlay">
       <div class="navbar">
-        <h1>BlockFlix</h1>
+        <h1>MyFlix</h1>
         <RouterLink to="/register" class="button register">Register</RouterLink>
       </div>
       <div class="form-container">
         <h2>Login to Your Account</h2>
-        <form @submit.prevent="handleLogin" class="login-form">
-          <input type="email" placeholder="Email" class="input-field" required />
-          <input v-model="password" type="password" placeholder="Password" class="input-field" required />
+        <form @submit.prevent="loginByEmail()">
+          <input v-model:="email" type="email" placeholder="Email" class="input-field" required />
+          <input v-model:="password" type="password" placeholder="Password" class="input-field" required />
           <button type="submit" class="button login">Login</button>
         </form>
+        <button @click="loginByGoogle()" type="submit" class="button login">Login by Google</button>
       </div>
     </div>
   </div>

@@ -14,34 +14,36 @@ const firstName = ref('');
 const lastName = ref('');
 const email = ref('');
 
-function handleSubmit() {
-  if (password.value === password2.value) {
-    store.firstName = firstName.value;
-    store.lastName = lastName.value;
-    store.email = email.value;
-    store.password = password.value;
-    router.push("/movies");
-  } else {
-
-    window.alert("Passwords do not match; Please re-enter");
-  }
-}
-
 async function registerByEmail() {
-  try {
-    const user = (await createUserWithEmailAndPassword(auth, email.value, password.value)).user;
-    await updateProfile(user, { displayName: `${firstName.value} ${lastName.value}` });
-    store.user = user;
-    router.push("/movies");
-  } catch (error) {
-    alert("There was an error creating a user with email!");
+  if (password.value === password2.value) {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
+      const user = userCredential.user;
+
+      store.firstName = firstName.value;
+      store.lastName = lastName.value;
+      store.email = email.value;
+      store.password = password.value;
+
+      await updateProfile(user, { displayName: `${firstName.value} ${lastName.value}` });
+
+      store.user = user;
+
+      router.push("/movies");
+    } catch (error) {
+      alert("There was an error creating a user with email!");
+    }
+  } else {
+    window.alert("The passwords are not the same!");
   }
 }
 
-async function registerByGoogle() {
+async function registerByGoogle(event) {
+  event.preventDefault();
   try {
-    const user = (await signInWithPopup(auth, new GoogleAuthProvider())).user;
-    store.user = user;
+    const user = await signInWithPopup(auth, new GoogleAuthProvider());
+    store.user = user.user;
+
     router.push("/movies");
   } catch (error) {
     alert("There was an error creating a user with Google!");
@@ -58,19 +60,20 @@ async function registerByGoogle() {
       </div>
       <div class="form-container">
         <h2>Create an Account</h2>
-        <form @submit.prevent="handleSubmit">
+        <form @submit.prevent="registerByEmail">
           <input v-model="firstName" type="text" placeholder="First Name" class="input-field" required>
           <input v-model="lastName" type="text" placeholder="Last name" class="input-field" required>
           <input v-model="email" type="email" placeholder="Email" class="input-field" required>
           <input v-model="password" type="password" placeholder="Password" class="input-field" required>
           <input v-model="password2" type="password" placeholder="Re-enter Password" class="input-field" required>
           <button type="submit" class="button register">Register</button>
-          <button @click="registerByGoogle()" class="button register">Register by Google</button>
         </form>
+        <button @click="registerByGoogle" class="button register">Register by Google</button>
       </div>
     </div>
   </div>
 </template>
+
 
 <style scoped>
 .hero {
