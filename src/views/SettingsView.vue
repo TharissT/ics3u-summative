@@ -4,9 +4,9 @@ import { useRouter } from 'vue-router';
 import { useStore } from "../store";
 
 const store = useStore();
-const firstName = ref(store.firstName);
-const lastName = ref(store.lastName);
-const email = ref(store.email);
+const firstName = ref(store.user?.displayName?.split(' ')[0] || ''); 
+const lastName = ref(store.user?.displayName?.split(' ')[1] || '');
+const email = ref(store.user.email);
 
 const router = useRouter();
 
@@ -14,6 +14,7 @@ function handleSave() {
 
     store.firstName = firstName.value;
     store.lastName = lastName.value;
+
 
     alert("Your changes have been saved!");
     router.push("/movies");

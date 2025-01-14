@@ -7,7 +7,6 @@ import { useStore } from '../store';
 
 const store = useStore();
 const router = useRouter();
-
 const password = ref('');
 const password2 = ref('');
 const firstName = ref('');
@@ -15,26 +14,13 @@ const lastName = ref('');
 const email = ref('');
 
 async function registerByEmail() {
-  if (password.value === password2.value) {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth, email.value, password.value);
-      const user = userCredential.user;
-
-      store.firstName = firstName.value;
-      store.lastName = lastName.value;
-      store.email = email.value;
-      store.password = password.value;
-
-      await updateProfile(user, { displayName: `${firstName.value} ${lastName.value}` });
-
-      store.user = user;
-
-      router.push("/movies");
-    } catch (error) {
-      alert("There was an error creating a user with email!");
-    }
-  } else {
-    window.alert("The passwords are not the same!");
+  try {
+    const user = (await createUserWithEmailAndPassword(auth, email.value, password.value)).user;
+    await updateProfile(user, { displayName: `${firstName.value} ${lastName.value}` });
+    store.user = user;
+    router.push("/movies");
+  } catch (error) {
+    alert("There was an error creating a user with email!");
   }
 }
 
@@ -49,6 +35,8 @@ async function registerByGoogle(event) {
     alert("There was an error creating a user with Google!");
   }
 }
+
+
 </script>
 
 <template>
@@ -73,7 +61,6 @@ async function registerByGoogle(event) {
     </div>
   </div>
 </template>
-
 
 <style scoped>
 .hero {
