@@ -1,37 +1,42 @@
 <script setup>
 import { onMounted, ref } from 'vue';
-import { useRoute } from 'vue-router';
+import { useRouter, useRoute } from 'vue-router';
 import { useStore } from '../store';
+import { signOut } from 'firebase/auth';
+import { auth } from '../firebase';
 
 const store = useStore();
 const isHomePage = ref(false);
 const route = useRoute();
+const router = useRouter();
 
 onMounted(() => {
     if (route.path === '/') {
         isHomePage.value = true;
     }
 });
-
+const logout = () => {
+  store.user = null;
+  signOut(auth);
+  router.push("/");
+}
 </script>
 
 <template>
     <div class=header>
-        <h1> BlockFlix </h1>
+        <h1>BlockFlix</h1>
     </div>
     <div class="buttons" v-if="isHomePage">
         <RouterLink to="/register" class="button">Register</RouterLink>
         <RouterLink to="/login" class="button">Login</RouterLink>
     </div>
     <div class="buttons" v-if="!isHomePage">
-         
-            <h1>Hello, {{ store.user?.displayName || 'Guest' }}</h1>
-        
+        <h1>Welcome, {{ store.user?.displayName || 'Guest' }}</h1>
         <RouterLink to="/cart" class="button">Cart</RouterLink>
         <RouterLink to="/settings" class="button">Settings</RouterLink>
-        <RouterLink to="/" class="button">Logout</RouterLink>
+        <button @click="logout" class="button">Logout</button>
     </div>
-</template> 
+</template>
 
 <style scoped>
 h1 {
