@@ -2,7 +2,7 @@
   import { ref } from 'vue';
   import { useStore } from '../store';
   import { useRouter } from 'vue-router';
-  import { updateProfile } from 'firebase/auth';
+  import { updateProfile, updatePassword} from 'firebase/auth';
   import { auth } from '../firebase';
 
   const store = useStore();
@@ -11,6 +11,7 @@
   const user = store.user;
   const firstName = ref(user?.displayName?.split(' ')[0] || '');
   const lastName = ref(user?.displayName?.split(' ')[1] || '');
+  const password = ref(user?.password);
   const email = ref(user?.email || '');
 
   const handleSubmit = async () => {
@@ -18,6 +19,7 @@
 
       try {
         await updateProfile(user, { displayName: `${firstName.value} ${lastName.value}` });
+        await updatePassword(user, password.value)
         router.push("/movies");
       } catch (error) {
         alert("There was an error updating your profile!");
@@ -45,6 +47,10 @@
         <div class="form-group">
           <label for="lastName">Last Name:</label>
           <input v-model="lastName" type="text" id="lastName" required />
+        </div>
+        <div class="form-group">
+          <label for="password">Password:</label>
+          <input v-model="password" type="password" id="password"  required />
         </div>
         <div class="form-group">
           <label for="email">Email:</label>
