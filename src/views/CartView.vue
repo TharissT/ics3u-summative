@@ -11,6 +11,7 @@
   function clearCart() {
     store.cart.clear();
     localStorage.removeItem(`cart_${store.user.email}`);
+    alert("Thank you for your purchase!");
   }
 </script>
 
@@ -23,7 +24,7 @@
       <button @click="removeItem(key)" class="remove-button">Remove</button>
     </div>
     <router-link to="/movies" class="back-button">Back to Movies</router-link>
-    <button @click="clearCart"> Checkout </button>
+    <button @click="clearCart" class="checkout-button">Checkout</button>
   </div>
 </template>
 
@@ -151,4 +152,35 @@
     outline: none;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
   }
+
+  .checkout-button {
+  padding: 16px 32px;
+  background-color: maroon;
+  color: white;
+  font-size: 1.2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: center;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.7);
+}
+
+.checkout-button:hover {
+  background-color: maroon;
+  transform: scale(1.05);
+}
+
+.checkout-button:active {
+  background-color: darkred;
+  transform: scale(1);
+}
+
+.checkout-button:focus {
+  outline: none;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+
 </style>

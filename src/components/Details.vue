@@ -15,7 +15,6 @@ const trailers = ref([]);
 async function fetchMovieDetails(id) {
   if (!id) return;
 
-
   const response = await axios.get(
     `https://api.themoviedb.org/3/movie/${id}?api_key=${import.meta.env.VITE_API_KEY}`
   );
